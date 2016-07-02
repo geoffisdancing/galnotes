@@ -1,3 +1,133 @@
+160701 K Means Clustering/Hierarchical Clustering
+  1. Supervised vs Unsupervised
+    - The loss function (described by the (y - y-hat), ie MSE etc) effectively "supervises" our learning of the relationship between y = f(x).
+    - In unsupervised learning. Can still try to discern structure from the x data.
+    - Unsupervised learning is particularly sensitive to selecting the right model, and deciding which data goes into the model.
+  2. Clustering
+    - Dividing data into distinct subgroups. Since we don't have labels, choosing the value of k is of particular importance, since you never know the truth and can't cross-validate to infer the best k
+  3. K Means
+    - We want within-cluster variation to be small
+    - Want assignment of points to groups so within cluster variation is the smallest. So one way is to minimize the squared euclidean distance between all pairwise points
+    - K means procedure:
+        - start by randomly assigning each data point to a cluster.
+        - computer the centroid of the cluster
+        - re-assign the data points to the nearest centroid
+        - recompute centroid
+        - reassign data points...and repeat until no further change.
+    - Techniques to choose K, or to "learn" k
+        - Elbow Method: Computer within cluster variation (sum of squares) for several values of K. Thus there often will be a k after which the decrease in variation decreases. So you pick the elbow. But there is not always an obvious elbow on which to pick k.
+        - GAP statistics
+        - Silhouette Coefficient
+    - Curse of Dimensionality
+       - Since we're computing distances between points in k means, in high dimensional spaces, distances become far apart in high dimensions.
+       - Amount of data needed to compensate for high dimensional data increases quickly
+   4. Hierarchical Clustering
+      - Algorithm: each poitn is its own cluster, merge closest clusters, and end when all points are in a single cluster.
+      - don't have to choose k at the start, number of groups depends on where we cut the dendrogram
+      - Several distance measures to consider using, resulting in different dendrograms. Most common are complete and average 
+
+160630 Time Series
+  1. Reading notes:
+      1. One main goal is to account for the correlated nature of points, which explains their relative "smoothness" in time series data. So try to describe some mathematical model to describe the appearance of the data observed.
+      2. Methods include using white noise,
+          -moving averages: replaces a white noise series w-sub-t with an average of its current value and its immediate neighbors past and future.
+          - Autoregressive- uses the two previous values
+          - Random Walk with Drift -  random white noise movement with a drift (slope?) factor
+  2. Time Series Lecture: analysis of experimental datat observed over time, usually equally spaced.
+    - Conventional statistical methods are restricted given the correlation of adjacent time points; given assumption of independent and identically distributed data
+    - Overal: find a pattern from past data at hand, and forcast into the future
+    - Assumptions is that the pattern will continue
+  3. Components of a time series
+    - Trend - long run up and down of the series.
+    - Cycle: upward/downward around the trend
+    - Seasonal Variations: patterns following yearly patterns
+    - Irregular Variation: remaining erratic movements that can not be accounted for
+    - Goal is to estimate the trend, cycle, seasonal components of a time series so all that's left is irregular fluctuations
+  4. Time Series Regression
+    - Linear regression featurized time: discarding assumption of normalized residuals
+    - Literally add a factor to the linear model for trend
+    - Similarly model seasonal variable using seasonal or seasonal-dummy variables.
+        - Model L seasons in SNsubT using L-1 indicator variables S1 through SL-1
+    -  SSS10 Time Series Trend Series
+    - Binning of time series data (past) is informed by the goal of forecasting. What do you want to predict?
+    - Additive Decomposition: y = TR + SN + CL + IR , defined as trend, seasonal, cyclical and irregular factors.
+        - Estimate SN t by grouping seasons and averaging and making it zero scale.
+        - Estimate TR t by subtracting out seasonalized estimates , and fit a standard regression
+        - Estimate CL t by removing the season and trend, and perform a moving average
+            - The average of irregular fluctuations will appx be zero
+        - Estimate IR t by looking at the residual after removing the main components
+        - We assume that hte pattern continues into the future and that there is no pattern in the irregular component: therefore we predict IR t to be zero, thus the point estimate of IR at time t is zero.
+        - Thus forecast of point estimate at time t is y = tr + sn + cl (all sub t).
+            - Can give a prediction interval y +/- B sub (t, alpha), B is the error bound in a prediction interval
+        - Key assumption of additive decomposition is additive variation over time. If this doesn't hold and you can't stabilize the variance, can try multiplicative decomposition
+    - Smoothing methods
+        - Simple exponential smoothing: Used when there is no significant linear trend (ie slope), but mean is changing over time
+            - If the mean remains constant, then the standard linear model can be used, giving equal weight to all time points
+            - If mean is changing slowly may better capture trend if we can give more weight to more recent observations than older observations, which is simple exponential smooothing.
+            - Optimize value of alpha (which weights most recent data value)
+            - SSS11 Exponential Smoothing
+            - SSS12 Exponential Smoothing equation: So for more distant observations (x from current), the weight (alpha(1-alpha)^x) gets driven to zero, so more recent observations have a higher weight
+            - alpha is a hyperparameter to optimize by minimizing sum of squared error SSE
+            - SSS13 The error bound for more distant observations (farther from today) will get larger. Since when alpha is large, the error term (Tau -1) x alpha squared gets driven to zero
+        - Hold's Trend Corrected Exponential Smoothing : allows for modeling both a linear trend (slope) that changes over time
+            - Allows modeling of the mean and the growth rate (slope or linear trend) to change with time.
+            - Allows us to take int o account growth rate, by adding a factor "b".
+            - thus have both alpha and gamma hyperparameters
+            - SSS14 Holt's Exponential Smoothing
+        - Holt Winter's Exponential Smoothing : adds a component of seasonality to the linear trend/slope.
+            - Similar to Holts, but it additionally takes into account an additional seasonal factor
+            - Note that you ned to have data of enough seasons in order for this to work
+    5. ARIMA:
+        The Box-Jenkins Methodology applies autoregressive moving average models to find the best fit of time series based on past values.
+        1. Approach:
+          - SSS15 ARIMA model approach
+          - Model Identification
+
+          - The autocorrelation function is the correlation between the current time and the time x times ago. Uses pearson correlation coefficient
+          - Partial auto- correlation, is the correlation between two separated points with the effect of the intervening points conditioned out. Almost like multivaraible linear regression with intervening time points as variables. SSS16 phone snapshot
+        - See ipython notebook notes for examples of autocorrelation and partial autocorrelation plots SSS16 Autocorrelation/partial correlation plots
+            - So note the first time point 0, correlation is 1 (since correlated with itself), but for autocorrelation, as you get farther out, correlation decreases.
+            - For partial autocorrelation, after taking into account the first lag, the second lag actually has little additional correlation.
+        - Stationary Time Series:
+            - A time series for which the statistical behavior of a set of observations is identifical to that of the shifted set of observations for any collection of time points for any shift h (lag). This is a VERY STRONG ASSUMPTOIN.
+            -  So the weak stationary assumption is that this holds for the first two moments : mean and covariance (with it self h-lags away). These are less reliant on time.
+            - In reality, most time series are not stationary.
+        - So how to modify the time-series to improve the approximation of stationarity
+            - Detrending - constraint 1
+            - differencing - constraint 1
+            - transformation  - constraint 2
+            - These are methods to try to turn nonstationary data into stationary data so we can model it using ARIMA, given the ARIMA asusmptions of stationary data
+        - Use Autocorrelation (AC) or partial AC plots to compare the how well each method (detrending or differecing)
+        - for deternding, plot the residuals on an autocorrelation plot to see whether you adequately removed autocorrelation
+        - So keep examining autocorrelation plots to see whether you've adequately addressed the stationarity assumption using your methods above: deternding, differencing, transformation.
+        - IN J&J example, needed to take log, difference and difference the seasonality (every 4th quarter), before we acheived statioarity.
+         - NOte, detrending via linear regression may allow us to take into account multiple variables other than time in the modeling (since ARIMA can't do this).
+         - Once we achieve stationarity, we take a look at the timepoint where decay is achieved at timepoint k. This will help determine how far back to consider correlation between observations.
+    6. Autoregresive Models :
+        - Autoregressive-po models is based on the idea that the present value of the series can be explained as a function of the p past values.  So use PACF plot to determine p, see slides.
+   7. Moving Average Model:
+        - assumes that white noise is combined linearly to form the observed data.
+        - based on prior errors
+        - Use ACF plot to determine q,
+   8. Autoregressive Moving Average Model ARMA:
+        - So ACF will identify the q parameter
+        - PACF will identify the p parameter
+   9. ARIMA :
+        - Additionally takes into account for d, the number of differences needed to achieve stationary
+        - This then provides the model by whcih you can predict future values (your model can) as a function of x-prior data points and coefficients  
+    10. Seasonal differences can also be modeled in S-ARIMA.
+    11. Fit the best candidate models and compare how models perform using AIC or BIC comparison
+    12. After lab learnings:
+      A. It sounds like the approach is as follows: view the AC and PAC plots to get a sense of the k-units lag from the PAC (p) and the AC (q) plots.
+      B. Next step is to make data stationary: Can play with detrending, but ultimately, it seems differencing is the better technique to try to achieve stationarity of the data. However, be aware of overdifferencing
+          - you detrend (often) by fitting an OLS to the data, and plotting ACF, and PACF plots to the residuals
+          - second order differencing is the equivalent of a second order derivative of the data
+      C. Once you've achieved stationarity of the data via differencing and or detrending, then you need to determine the p and q parameters by looking at the PACF and ACF plots and noting lag.
+      - if you notice lag in either PACF or ACF plots, these will inform the remaining parameters p and q respectively in your ARIMA model, based on the number of k-lag days you observe as significant in the plots before they drop within the error bounds.
+     - Note that your choice of the seasonality parameter L will seem to (i believe) inform the numbers you choose for d and maybe little p/q, since if L is 7, then a D of 1 I believe suggests a 7x1 differencing that is significant.
+     - Less clear on how to pick P/Q relative to p/q and even D relative to d.
+      D. Then plug all these parameters into ARMIA and then tune further based on ACF and PACF plots until adequate.
+
 
 
 
@@ -26,6 +156,12 @@
         min sample 3,17
         max features 1-0.1
         n_estimators 100
+  7. BIG UNDERSTANDINGS:
+    - cross validation is generally only ever used with training data. Use this to obtain an estimate of what your test error might be, without ever using your test data (until the very end) to train your model.
+    - For grid search and cross_val_score, you only ever need to feed this training data. Never really feed it test data
+    - Select best model after you've tuned your parameters by comparing cross_val_score on trainig data only.
+    - Once you've selected your best model, THEN you can use that model (with set coefficients) on test data to obtain an estimate of test error. This generates the parameters of accuracy and or other relevant metrics that you can tell others about to describe your model.
+    - Then, if desired, you can refit coefficients on the entire data set before using this to predict future data.
 
 
 

@@ -32,6 +32,7 @@ import matplotlib.pyplot as plt #plotting functionality plt
 
 pd.read_csv('filepath') # to read csv file into dataframe, assign to df name.
 # try date_parser=[col index] parameter to allow specification of a specific column to parse as a datetime.
+pd.read_table('text_filepath') #read text file as df
 pd.scatter_matrix(<dfname>, alpha = 0.2, figsize=(6,6),diagonal='kde'); #scatter matrix of dataframe variables in pandas
 
 df = df.drop('column name', axis=1, inplace=True)  # drops column in pandas dataframe, axis = 1 indicates column in pandas. default is axis = 0 which drops an observation (row) from the data
@@ -55,6 +56,8 @@ print <object>.summary()
 plt.scatter( credit_OLS.predict(), credit_OLS.outlier_test()['student_resid']) #plot student residuals vs fitted y's to look for outliers
 sm.qqplot(<OLS_model_object>.resid) #plot QQ plot of residuals of prevously fitted statsmodels object name.  
 pd.get_dummies(array) #create dummy variables
+pd.set_index('column_name', inplace=True) #set column as index
+pd.groupby(by=None, axis=0) #group df by first argument 
 
 # Numpy
 
@@ -104,7 +107,7 @@ param_grid = {'learning_rate':[0.1,0.05,0.02], 'max_depth':[4,6], 'min_samples_l
 est = GradientBoostingRegressor()
 gs_cv = GridSearchCV(est, param_grid).fit(X,y) #grid-search takes (essentially) a raw or minimally parameterized estimator Class, and performs a search across the parameter_grid for the best parameter by the given scoring method. Will automatically assign the best parameters to the gs_cv estimator object once complete.
 gs_cv.best_params_
-from sklearn.grid_search import RandomizedSearchCV #perform a random grid search, allows searching through a random set of the hyperparameters to get a sense of where to pick them, thus will run faster than GridSearch. 
+from sklearn.grid_search import RandomizedSearchCV #perform a random grid search, allows searching through a random set of the hyperparameters to get a sense of where to pick them, thus will run faster than GridSearch.
 
 from sklearn.cross_validation import cross_val_score
 cross_val_score(estimator_object, X, y=none, scoring = <scoring type>, cv=None) #obtains a accuracy score by cross validation. Takes a parameterized estimator object, but this object does not need to be fitted to training data, as this will take training data (x and y if available) and perform cross validation (train test, train test K-fold times) to obtain a cross-validated score. You can set the type of score using scoring = <scoring type, below>, default scoring type is the simples appropriate score for the method, such as accuracy for classifiers or R2 for regressors; y lets you set labels for supervised learning, cv defaults to 3 fold CV, can set other integer
