@@ -3,6 +3,7 @@
 #Python General commands
 
 if __name__ == '__main__': #base code that will run when file is run by calling it by name
+from __future__ import division
 
 f = open(filename) #open filename
 with open(filename) as f: #open file, prefer to use this over open(filename), so it automatically closes the file
@@ -23,6 +24,8 @@ with open('URL here', 'r') as f:  #read URL location as file,
 import requests  #ability to make GET request for web scraping
 r = requests.get('http://www.ebay.com/.....complete URL here ')
 soup2 = BeautifulSoup(r.content, 'html.parser')
+
+from collections import defaultdict
 
 
 #PANDAS
@@ -47,8 +50,10 @@ df.hist('column name') #plots histogram over column (or all columns if left blan
 series.unique() # to pull unique values of a given series
 df.unstack() #will switch from stacked (row-wise data) to column-wise data by the inner-most grouping index.
 df.values #return an np.ndarray of either the dataframe or the dataframe index
+#if result of slicing is a 1D dataframe, this will be a (vertical) pd.Series, which can't be used to index. So .values will turn into a 1D array, whcih can be used to index.
 df.values.astype(float) # returns values of a df as float
 df.astype(float) #suffix astype allows conversion to float.
+df.columns.values #returns an array of the column names of df
 
 import statsmodels.api as sm  # to import statsmodels package for regression capability
 sm.regression.linear_model.OLS(dependent_array, independent_dataframe).fit() #this shoudl be assigned to an <object> and then can be displayed using:
@@ -57,7 +62,8 @@ plt.scatter( credit_OLS.predict(), credit_OLS.outlier_test()['student_resid']) #
 sm.qqplot(<OLS_model_object>.resid) #plot QQ plot of residuals of prevously fitted statsmodels object name.  
 pd.get_dummies(array) #create dummy variables
 pd.set_index('column_name', inplace=True) #set column as index
-pd.groupby(by=None, axis=0) #group df by first argument 
+pd.groupby(by=None, axis=0) #group df by first argument
+df.iloc[<integerindex>] #allows indexing by index location in pandas dataframe
 
 # Numpy
 
@@ -76,7 +82,7 @@ arr = np.append(arr, item) #append item to an array. Can even initialze array wi
 arr = np.array([]) #initialize empty array
 np.linspace(start,stop,num=50) #create a var from start to stop with num points.
 balance['Married'] = balance['Married'].map({'Yes': 1, 'No': 0}) #mapping to change responses from Yes to 1.
-
+np.logical_not(<condition>) #allows you to exclude things in <condition> without an if statement.
 
 
 
@@ -119,6 +125,14 @@ plt.legend() #to have plot labels show as legend
 plt.axvline(x=0.4) #plot vertical line
 plt.axhline(y=0.6) #plot horizontal line
 df.hist()
+
+#plotting several sub-plots
+def fig(digits):
+    fig, _ = pl.subplots(nrows=10, ncols=10, figsize=(12,12))
+    for i,ax in enumerate(fig.axes):
+        ax.imshow(digits.images[i])
+        ax.axis('off')
+    plt.show()
 
 
 # PyMongo

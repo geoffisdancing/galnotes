@@ -1,3 +1,84 @@
+160707 Recommenders: Collaborative Filtering Recommenders
+  1. Collaborative Filtering
+    - considers past users behavior to predict missing ratings
+    - other types of recommending:
+      - popularity, independent of user's themselves
+      - content based: based on the properties/characteristic of an item and past user's behavior
+    - How to compare similarity?: User to user or item to item. In a setting where there are more users than items, calculating item to item similarity requires less computations.
+      - Also, user rows are sparsely populated. Whereas items are more densely populated
+    - Similarity comparison:
+      - Euclidean distance in practice doesn't work well as a comparison of similarity
+      - Pearson Correlation: measures how much two vectors deviate from their mean together. Isn't sensitive to users who consistently rate low or high
+      - Cosine distance: Measures the angle between two vectors. Equivalent to Pearson correlation coefficient when vectors are mean centered.
+      - Jaccard Similarity: Usable when you don't have ratings but have boolean data. Measures similarity between two sets.
+  2. Predicting Ratings
+    - SSS16 Predicting Ratings
+    - to predict rating for item i: (the sum of similarities between items i and j times the user's true rating of item j) / sum of the similarities of items i and j.
+    - TO improve performance, can restrain calculations to items most similar to i.
+  3. Recommenders are hard to validate:
+    - often deploy in A/B testing manner and see if it leads to more conversions
+    - can do k-fold cross validation
+        - Error metric: RMSE, though this considers how far off you are with all your ratings.
+        - Precision: proportion of top-n documents that are relevant  
+        - Recall: proportion of relevant items in the top n.
+        -
+
+
+
+160706
+
+  1. Non Negative Matrix Factorization
+    - At a high level: Non negative matrix factorization is a method of dimensionality reduction, whereby you break down a single matrix into two component matrices, but which have inner dimensions of "k" which are the pre-defined latent features you wish to find.
+        - defining k here is similar to all other unsupervised learning techniques whereby you can define how many "topics" or categories you aim to find using the method.
+        - It is similar to PCA and SVD, except in PCA/SVD, the two resulting component vectors are by definition orthogonal, whereas in NMF, they do not have to be (and thus often are not)
+        - SVD find orthogonal features between two matrices whereas NMF does not.
+        - Operationally, NMF finds the decomposed matrices W and H via alternative least squares: You have a target vector V. You initialize matrix W to be random values, shape (n x k). You then calculate matrix H shape (k x m) to minimize the least squares between W and V.
+          - You then fix H, and re calculate W to minimize least squares between H and V.
+          - Repeat alteratingly until least squares is minimized beyond a threshold or for a set number of iterations.
+    - V = W * H
+    - In NMF You "clip" the values of the resulting matrices such that they are non-negative values
+    - NMF decomposes feature matrix X (n x m) into W and H
+    - W is (n x k) represents the strength of each latent feature for each observation
+    - H is (k x m) represents strength of each observed feature for each latent feature
+    - k is number of latent features
+    - W and H are learned via alternating least squares (ALS) as above
+  2. Extensions
+    - Can add a regularization term to ALS
+    - Can choose K with a cross-validation process  
+    - cost function can be other than ALS such as information gain, gini index etc
+  3. Project tips:
+    - "interesting"
+    - Focused question
+
+
+160705 Dimensionality Reduction
+  1. Principal Component Analysis
+    - With many dimensions, many features are likely correlated, so if there is highly correlated data, there is redundant information. So we try to decorrelate the input vectors.
+    - The covariance matrix of a feature space usually has a lot of large values
+        - The ideal is to find the covariance matrix where all non-diagonal values are 0.
+    - The main idea is attempt to find a covariance matrix where all variables except the diagonal have minimal covariance with other variables, which means there is no relationship between the features
+    - We can transform the matrix to make this happen
+    - This corresponds to finding a new set of axes that better fit the data, the first dimension captures the maximal variance in the data
+        - The second dimension (of this first component) is defined to be orthogonal to the first, so there is no covariance between the two features, given this definition
+    - The Transformation matrix is called V which accomplishes this ideal covariance matrix
+    - In other words, to get the transformation, we need to find the eigenvalues and eigenvectors of M-T M.
+    - The Eigenvectors are the new basis, the eigenvalues are the variance in each of these dimensions.
+    - To determine how many features to keep , can look at the scree plot, plotting the variances (eigenvalues) in increasing order. Choose the elbow or wherever the most information is captured.
+    - An eigenvector v of a linear transformation T is a non-zero vector that, when T is applied to it, does not change direction. Applying T to the eigenvector only scales the eigenvector by the scalar value lambda, called the eigenvalue.
+        - T(v) = Lambda(v)
+    - Each principal component projection is defined such that each tries to capture as much variance of the original data set.
+  2. Curse of dimensionality
+    - Any technique that involves a distance metric suffers from this, which is that as features increase, the distance between them grows without bounds.
+    - Heuristic, for a model to be effective you need the distance between points to be less than some value d. Thus, you need 1/d^p data points, if you have p dimensions.
+  3. Singular Value Decomposition
+    - Allows you to calculate the eigenvector/eigenvalues for matrices, without computing the matrices themselves (computationally intensive).
+    - This is in fact what sklearn does under the hood to calculate PCA
+  4. Latent Features
+    - Structure in the data that you don't observe directly
+    - SVD can help discover latent features
+
+
+
 160701 K Means Clustering/Hierarchical Clustering
   1. Supervised vs Unsupervised
     - The loss function (described by the (y - y-hat), ie MSE etc) effectively "supervises" our learning of the relationship between y = f(x).
@@ -15,16 +96,16 @@
         - recompute centroid
         - reassign data points...and repeat until no further change.
     - Techniques to choose K, or to "learn" k
-        - Elbow Method: Computer within cluster variation (sum of squares) for several values of K. Thus there often will be a k after which the decrease in variation decreases. So you pick the elbow. But there is not always an obvious elbow on which to pick k.
+        - Elbow Method: Compute within cluster variation (sum of squares) for several values of K. Thus there often will be a k after which the decrease in variation decreases. So you pick the elbow. But there is not always an obvious elbow on which to pick k.
         - GAP statistics
         - Silhouette Coefficient
     - Curse of Dimensionality
        - Since we're computing distances between points in k means, in high dimensional spaces, distances become far apart in high dimensions.
        - Amount of data needed to compensate for high dimensional data increases quickly
    4. Hierarchical Clustering
-      - Algorithm: each poitn is its own cluster, merge closest clusters, and end when all points are in a single cluster.
+      - Algorithm: each point is its own cluster, merge closest clusters, and end when all points are in a single cluster.
       - don't have to choose k at the start, number of groups depends on where we cut the dendrogram
-      - Several distance measures to consider using, resulting in different dendrograms. Most common are complete and average 
+      - Several distance measures to consider using, resulting in different dendrograms. Most common are complete and average
 
 160630 Time Series
   1. Reading notes:
@@ -127,6 +208,9 @@
      - Note that your choice of the seasonality parameter L will seem to (i believe) inform the numbers you choose for d and maybe little p/q, since if L is 7, then a D of 1 I believe suggests a 7x1 differencing that is significant.
      - Less clear on how to pick P/Q relative to p/q and even D relative to d.
       D. Then plug all these parameters into ARMIA and then tune further based on ACF and PACF plots until adequate.
+  4. Time Series Review Moses 7-5-16
+    - For the p, partial autocorrelation, you'll only see the lag at that point (ie k=7), in contrast to the autocorrelation where you'll see the lag up TO that k value.
+    -
 
 
 
@@ -157,6 +241,7 @@
         max features 1-0.1
         n_estimators 100
   7. BIG UNDERSTANDINGS:
+    - SSS14 CV and Test Train Split
     - cross validation is generally only ever used with training data. Use this to obtain an estimate of what your test error might be, without ever using your test data (until the very end) to train your model.
     - For grid search and cross_val_score, you only ever need to feed this training data. Never really feed it test data
     - Select best model after you've tuned your parameters by comparing cross_val_score on trainig data only.
@@ -540,6 +625,7 @@
       -  ROC Curve, plotting true positive rate and false positive rate.
           - Area under the curve.
       - SSS5 Classifier Metrics
+      -SSS15 ROC Curve Sensitivity and Specificity
 
 
 
