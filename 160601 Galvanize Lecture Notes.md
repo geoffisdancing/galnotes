@@ -1,3 +1,121 @@
+160720 Apache Spark
+  1. Overall
+    - Spark is a framework for distributed processing
+    - Streamlined alternative to Map-Reduce
+    - Spark can be written in Scala, Java or Python
+    - Can analyze petabytes of data
+    - Faster than Map Reduce, API is simpler
+    - Spark job consists of a series of map and reduce function
+    - Intermediate data is kept in memory rather than written to disk
+    - Trade off is that it requires more memory.
+    - Spark outshines Map Reduce with iterative algorithms, where you don't have to save results of each step to disk
+    - For non-iterative algorithms Spark is comparable to Map Reduce
+  2. Spark
+    - HIGH LEVEL SUMMARY: So with spark, you construct the RDD, feed it a list of data, then perform a series of transformations (can be many) until you have what you want and then perform an action to aggregate the result.
+    - A Spark job pushes the data to the cluster, all computation happens on the executors, then the result is sent back to the driver.
+    - Spark does the parallelizing for you!
+    - RDD:	Resilient Distributed Dataset or a distributed sequence of records
+    - Spark Job:	Sequence of transformations on data with a final action
+    - Transformation:	Spark operation that produces an RDD
+    - Action:	Spark operation that produces a local object
+    - Spark Application:	Sequence of Spark jobs and other code
+    - Transformations occur on the Worker nodes
+    - The data is collected on the Driver
+  3.
+    - Group by key stores the values in memory, where as reduce by key, you only maintain the current accumulator so it is more light weight.  But if you need the individual elements, you need to use group by key.
+    - Spark MLib : ML library for use on Spark 
+
+
+
+
+
+160719 Map Reduce
+  1. MMD Reading: Map Reduce
+    A. Several distributed file systems: Google File System, Hadoop Distributed FIle System, CloudStore
+      - Very large files (if small, no need for DFS) KEY REQUIREMENT
+      - Files rarely updated, rather they are read as data KEY REQUIREMENT
+      - Files are divided into chunks 64MB size, repeated ~3 times at three different nodes
+    B. Overall Map-Reduce Structure:
+      - Some number of Map tasks are given one or more chunks from a distributed file system. These Map tasks turn the chunk into a sequence of key-value pairs. The Map function determines how to calculate the value from the key.
+      - Key value pairs are collected by the master controller and sorted by key. All key-values pairs with the same key end up with the same Reduce task.
+      - The Reduce function combines all values associated with a given key in the way determined by the Reduce function.
+  2. Big Data - Distributed Computing  
+    A. The three Vs of Big Data
+      - High Volume, Velocity, Variety
+      - With distributed computing systems (involving many computers) you can scale "out" which means adding more computers which can thus take advantage of parallelizable algorithms
+      - Distributed Computing pros: Better scalability, easy to add more machines than to add more cores to a machine.
+          - Fault tolerance - if one machine fails the whole network is not down
+      - There is overhead involved with having multiple computers in a network communicate with each other, and there is a restrained set of problems that can readily be solved in a paralellizable way. So these considerations must be made when deciding whether to use distributed solutions.
+   B. Map Reduce  
+    - Pushes the code to the data (rather than moving data to the code)
+    - Map Reduce handles details of distributed computing taking care of:
+        - Parallelization and Distribution
+        - Partitioning (shuffle & sort)
+        - Fault tolerance
+        - Resource Management
+        - Status and monitoring
+    - Map Function: Applies a function to each elements of a data structure
+        - Action of taking in some form of data and filter/transforming it into another form. Outputs 0 or more possibly transformed versions of the data
+    - Reduce Function: Takes a function which aggregates the elements of a data structure
+        - Action of taking a bunch of grouped data and combining it.
+    - Network/Bandwidth is a limited resource in Map Reduce operations. So try to decrease the amount of data that you need to move/sort around the framework.
+    - HIVE - SQL like language to query Map Reduce
+    - APACHE HBASE -
+    - Pig - high level language over Map Reduce
+
+
+
+
+160718 Amazon Web Services
+  1. Instance type:
+    m4, general purpose, balance between network, CPU etc
+    c, denotes compute
+    g, denotes GPU based instances
+
+
+160712 Neural Networks
+  1. Dense layer, or fully connected layer: proximal layer has connections between every node in that layer and the input layer
+    - Each node in each layer is a function of the outputs of the input layer
+    - Place a different weight on each connection between the input layer and layer 1
+        - Can initialize with a random weight
+        - So you have a matrix of weights between every node in each layer
+        - Goal is to learn the weights via training
+        - So the function of a given node is then the matrix-wise dot product of the weights for that layer dot-product the input layer (preceeding).
+        - There is additionally an "activation function" that defines how to combine the inputs with the weights from each node of the layer. Usually define the function uniformly across the layer, and often across the neural network.
+            - Several functions work better than others for this purpose
+            - Constraint is that the function must be differentiable
+        - Predefine neural network structure and functions etc.
+        - Weights are then learned via "training" to minimize the output loss function
+        - SSS20 Neural Network Architecture
+        - Layer 2, for example, will take the augmented values of layer 1, run it through the activation function, and output to the next layer
+        - Loss function is put on the output (must be differentiable) to determine the loss of true vs. predicted, and then change weights to minimize the loss
+  2. Optimizing Weights:
+        - LEARN MORE HERE: ultimately you can describe the impact a given weight has on the ultimate loss function as a function of distal layers/weights.
+        - So you send a "batch" of x's through the network, obtain a loss function, then
+        - backpropagation is using that loss to calculate the optimal weights to minimize loss.
+        - Then send another batch through, repeat.
+        -  Ultimately, the network will see all the data in various batches
+  3. General
+      - Neural networks require a lot of data to train, and underperform with smaller data sets
+      - But performance tends to continue to increase as data gets bigger
+      - Width of the network describes the number of nodes per layer
+      - Rules of thumb:
+        - First go for depth of the network
+        - Once can do that (errors etc), can increase width of the layer
+        - Want to "overfit the data", then impose regularization
+        - Drop out: is a value x btw 0-1, and will ignore x weights during forward and back propagation, to "force the net to adjust the weight on a future prop if it is really important"
+        - Learning Rate: decreasing the learning rate per node (similar to in trees)
+  4. Convolutional Neural Networks
+      - Good when inputs are correlated with one another; ie pixels in an image
+      - Convolutions are smaller matrices that act as a filter when you pass it over the larger image.
+      - Train a neural network to learn the smaller matrices/filters. Similar to learning the weights in the above NN
+      - Note that this is not a dense network, only some nodes are affecting subsequent nodes
+      - After a convolutional layer, often do a "Pooling" layer (ie Max Pooling), which uses a small convolution ie 3x3, then takes the max of that area, then creates another smaller layer (causes significant information degradation). Tries to solve the problem of things not appearing in the exact same places, pooling tries to solve this.
+      - Can intersperse several convolutional layers and a pooling layer, and repeat as needed.
+      - In subsequent layers of the network, each convolution is akin to a node, and the convolutions themselves are like weights that are changed with each forward/back-propagation. Therefore, each layer can "learn" more complex interactions between the features, again such that you decrease the loss function.
+      - After the last convolutional layer, "unravel" the features that come out of the last layer into one or two fully-connected layers before giving the output predictions.
+
+
 160707 Recommenders: Collaborative Filtering Recommenders
   1. Collaborative Filtering
     - considers past users behavior to predict missing ratings
@@ -21,31 +139,59 @@
         - Error metric: RMSE, though this considers how far off you are with all your ratings.
         - Precision: proportion of top-n documents that are relevant  
         - Recall: proportion of relevant items in the top n.
-        -
+    - To do cross validation for a recommender:
+        - keep a percentage of your cells that have data (of the sparse matrix) and hold this as out as your test set. Then do cross-validation on the remaining (training set), and you can get an approximation of error using your held out test set.  This is under the assumption that there is an ADDITIONAL test set that you will obtain a final score on (ie in a competition style setting).
+  4. Review of SVD/ PCA
+    - All decomposed matrices (ie all axes of PCA) will be orthonormal.
+    - SVD is not very good for very sparse matrices, since you need to fill in missing values, and so the algorithm will try to fit to those values (ie 0) which doesn't perform well.
+    - NMF can be a good option for recommending systems using sparse matrices.
+        - The decomposed matrices W*H (from V = W*H)
+        - One thing you need to do is to impose a regularization factor (the right side of the equation), so given the missing values, some values are not necessarily seen? ? so you need to impose a constraint on them using the normalization factor.
+    - SSS17 NMF equation for recommendation
+  5. NMF
+    - Much of the observed variation in rating values is due to item bias and user bias. Capture this using a few bias terms: overall bias of the rating by the user i for item j:: b-ij = mean rating + b-i + b-j. bi = bias of the user on average; bj = item's average deviation from overall average.
+    - Thus the cost function can be updated to reflect the bias equation.
+    - SSS18 NMF Bias cost function
+
 
 
 
 160706
 
   1. Non Negative Matrix Factorization
-    - At a high level: Non negative matrix factorization is a method of dimensionality reduction, whereby you break down a single matrix into two component matrices, but which have inner dimensions of "k" which are the pre-defined latent features you wish to find.
+    - At a high level: Non negative matrix factorization is a method of dimensionality reduction, whereby you break down a single matrix into two component matrices, but which have inner dimensions of "k". K defines the pre-defined k number of latent features you wish to find/break down your original matrix into.
         - defining k here is similar to all other unsupervised learning techniques whereby you can define how many "topics" or categories you aim to find using the method.
-        - It is similar to PCA and SVD, except in PCA/SVD, the two resulting component vectors are by definition orthogonal, whereas in NMF, they do not have to be (and thus often are not)
+        - It is similar to PCA and SVD, except in PCA/SVD, the two resulting component vectors (specified by the size of latent features k you are seeking...ie the inner dimensions of the component matrices) are by definition orthogonal, whereas in NMF, they do not have to be (and thus often are not)
         - SVD find orthogonal features between two matrices whereas NMF does not.
-        - Operationally, NMF finds the decomposed matrices W and H via alternative least squares: You have a target vector V. You initialize matrix W to be random values, shape (n x k). You then calculate matrix H shape (k x m) to minimize the least squares between W and V.
+        - Operationally, NMF finds the decomposed matrices W and H via an optimizatio method called alternative least squares: You have a target vector V shape (n x m). You initialize matrix W to be random values, shape (n x k). You then calculate matrix H shape (k x m) to minimize the least squares between W and V.
           - You then fix H, and re calculate W to minimize least squares between H and V.
-          - Repeat alteratingly until least squares is minimized beyond a threshold or for a set number of iterations.
+          - Repeat alternating until least squares is minimized beyond a threshold or for a set number of iterations.
     - V = W * H
-    - In NMF You "clip" the values of the resulting matrices such that they are non-negative values
-    - NMF decomposes feature matrix X (n x m) into W and H
+    - SSS19 NMF equation
+    - All values of V must be non-negative
+      - In NMF You "clip" the values of the resulting matrices such that they are non-negative values
+    - NMF decomposes feature matrix X (n x m) into W and H, which are not likely orthonormal
     - W is (n x k) represents the strength of each latent feature for each observation
     - H is (k x m) represents strength of each observed feature for each latent feature
     - k is number of latent features
     - W and H are learned via alternating least squares (ALS) as above
+        - ALS is biconvex, so you don't always find the global optima. Better optima can be found with strategic initializations (like k means) or from multiple random initializations
+    - NMF is an approximate factorization, and has non-unique solutions. Will find a local optima with non-convex RSS optimization
+    - k features is a tunable hyperparameter
   2. Extensions
-    - Can add a regularization term to ALS
+    - Regularization with NMF when using ALS
+        - In most cases of using NMF as a recommending system, you have data which is very sparse: ie data on many more items (movies, amazon items etc) than number of users--further the actual cells in this matrix that are occupied are the small minority.
+        - Given this, for SVD, you are forced to fill in the values with zeros or something else, to which the algorithm subsequent fits, which doesn't make much sense and thus does not perform well.
+        - with NMF, however, you don't have to impute missing values.
+        - SSS17 NMF equation for recommendation
+        - However, since W and H are randomly initialized in NMF, all values in these matrices are filled. Given the sparsity of the data as explained, this increases the likelihood that you will overfit the data given the simple RMS cost function.
+        - Thus, adding regularization to the cost function (right side of the equation in SSS17), is the practical reality of using NMF on real world recommender-type data sets.
+        - This regularized cost will serve to impose greater penalty on the wi and hj values that overfit the data, and this is applied DURING the ALS fitting process.
+        - lambda is a hyperparameter which you can tune, ie via graph search, comparing resulting models via RMSE error or something similar.
+        - In graphmodels, lambda is a hyperparameter as such, which you can tune.
     - Can choose K with a cross-validation process  
     - cost function can be other than ALS such as information gain, gini index etc
+    - See tomomorrow's lecture for info on BIAS accomodation via NMF
   3. Project tips:
     - "interesting"
     - Focused question
@@ -56,13 +202,17 @@
     - With many dimensions, many features are likely correlated, so if there is highly correlated data, there is redundant information. So we try to decorrelate the input vectors.
     - The covariance matrix of a feature space usually has a lot of large values
         - The ideal is to find the covariance matrix where all non-diagonal values are 0.
+        - We can do this by defining that all of our PCA dimensions will be ORTHONORMAL to each other, thus by definition we remove all covariance from the covariance matrix between these dimensions.
+        - ORTHONORMAL means that all vectors are unit vectors and are orthogonal to each other (dop product = 0)
     - The main idea is attempt to find a covariance matrix where all variables except the diagonal have minimal covariance with other variables, which means there is no relationship between the features
     - We can transform the matrix to make this happen
-    - This corresponds to finding a new set of axes that better fit the data, the first dimension captures the maximal variance in the data
+    - This corresponds to finding a new set of axes that better fit the data
+    - Start by defining the first dimension to capture the maximal variance in the data
         - The second dimension (of this first component) is defined to be orthogonal to the first, so there is no covariance between the two features, given this definition
-    - The Transformation matrix is called V which accomplishes this ideal covariance matrix
+    - Our goal with PCA is to find the transformation matrix V which when applied to original data X which gives us our ideal covariance matrix.
     - In other words, to get the transformation, we need to find the eigenvalues and eigenvectors of M-T M.
-    - The Eigenvectors are the new basis, the eigenvalues are the variance in each of these dimensions.
+    - The Eigenvectors are the new basis; the eigenvalues are the variance in each of these dimensions.
+    - To reduce the number of dimensions to m << p, can get rid of the smallest lambdas
     - To determine how many features to keep , can look at the scree plot, plotting the variances (eigenvalues) in increasing order. Choose the elbow or wherever the most information is captured.
     - An eigenvector v of a linear transformation T is a non-zero vector that, when T is applied to it, does not change direction. Applying T to the eigenvector only scales the eigenvector by the scalar value lambda, called the eigenvalue.
         - T(v) = Lambda(v)
@@ -70,12 +220,19 @@
   2. Curse of dimensionality
     - Any technique that involves a distance metric suffers from this, which is that as features increase, the distance between them grows without bounds.
     - Heuristic, for a model to be effective you need the distance between points to be less than some value d. Thus, you need 1/d^p data points, if you have p dimensions.
-  3. Singular Value Decomposition
+  3. Singular Value Decomposition: A method to help perform calculations necessary for PCA
+    - Since calculating the eigenvalues and eigenvectors is difficult, the SVD technique allows for more efficient computation. SVD can also help find latent features.
+    - SVD is based on the following: every matrix has a unique decomposition in the following form: X = U E V.T
+    - U and V are orthonormal matrices (constraint imposed by the definition of PCA)
+    - E is a diagonal matrix of positive values; can reduce dimensions by sending the smaller diagonals to zero. Thus this is the method of dimensionality reduction via SVD.
+        - Plotting the scree plot and determining the elbow is a way to determine how many features/dimensions to keep.
     - Allows you to calculate the eigenvector/eigenvalues for matrices, without computing the matrices themselves (computationally intensive).
     - This is in fact what sklearn does under the hood to calculate PCA
   4. Latent Features
     - Structure in the data that you don't observe directly
     - SVD can help discover latent features
+    - In SVD/PCA, you find all the orthonormal matrices for every category of features in your data; so you usually end up with the same number of latent "features" as your original feature set.
+        - However, you can then calculate the information gain from each given feature, rank them, and then choose to keep only 3 or 5 or whatever. This varies from NMF in that in NMF you pre-specificy the k number of latent features you wish to find at the beginning of the procedure.
 
 
 
@@ -106,6 +263,7 @@
       - Algorithm: each point is its own cluster, merge closest clusters, and end when all points are in a single cluster.
       - don't have to choose k at the start, number of groups depends on where we cut the dendrogram
       - Several distance measures to consider using, resulting in different dendrograms. Most common are complete and average
+
 
 160630 Time Series
   1. Reading notes:
@@ -378,17 +536,19 @@
       - Therefore each subsequent tree truly becomes an expert in the errors of the prior tree
       - And the final prediction is an additive sum of the "prediction" for each tree.
       - Gradient Boosting SSS1.
-     - The weight beta-m in the sum of the predictions of trees, the weight is higher for later trees, since they can
+     - The weight beta-m is the sum of the predictions of trees, the weight is higher for later trees, since they can
      - Note this is prone to overfit, since we're fitting to the errors of prior trees. So use CV to determine when to stop.
      - Shallow trees are higher bias, lower variance models. (High bias since shallow, low variance because if we took another sample of data from the population, another 3 split tree would look similar)
      - So by limiting sequential trees to 3 splits, you effectively hone in on the highest error regions of the prior tree, making splits that decrease error (MSE) the most for any given tree.
      - ??What if we bag boosted models?
        - Random forest lends itself for running on parallel computers or cores on a computer. Sequential tree methods such as Gradient Boosting or AdaBoost can not take advantage of parallel processing.
+     - In a Random Forest, as you build more trees, the test error should decrease and eventually level off. In Boosting, as you build more trees, the test error should decrease and level off, but then increase if you boost too much. However sklearn describes that GB is fairly robust to overfitting (ie test error increasing)
    5. Parameter tuning
       - Could set a shrinking learning rate, "SHRINKAGE", meaning that we'll only apply 20% of what each subsequent tree suggests to do. Can prevent over fitting.
           - This will require higher n_estimators/trees, because it by definition learns much slower.
           - Ultimately will lead to lower test error with shrinkage. But requires more trees to get there.
           - Since this generally works: so one strategy is to tend to pick the max number of computationally possible trees to make (given time) and search over several hyperparameters discussed here via CV.
+            - one of the hyperparameters will be learning rate
       - Parameter tune tree structure:
           - Max depth: controls degree of interactions between variables; often not larger than 4-6
           - Min samples per leaf: limits overfitting
@@ -411,7 +571,7 @@
    8. Diagnostics
     A. Ways to infer feature importance from black box models
       - Partial dependency plots
-        - Take your feature/variable x1 you want to study. Change all data points x1-i to x1-j to values x1i thorugh j sequentially. IE CHANGE ALL VALUES to x1-i once, then X1-i2 once etc.
+        - Take your feature/variable x1 you want to study. Change all data points x1-i to x1-j to values x1i through j sequentially. IE CHANGE ALL VALUES to x1-i once, then X1-i2 once etc.
           - record the predicted output y of your model
           - then can generate a plot for a given feature of how your model predicts y to change based on numeric changes of feature x1.
           - can repeat for all features and obtain a sense of the importance of each feature in your model. ie some inferential power.
@@ -427,7 +587,7 @@
   10. XG Boost
       - For every given feature, keep only the percentiles of that feature, which greatly reduces the space over which the algorithm needs to decide where to split.
           - but you still keep all observations of the data.
-          - so you get computational speed gains to grow a gree
+          - so you get computational speed gains to grow a tree
       - This serves as a form of regularization, resulting in a slightly less complex model and less variance.
 
 
@@ -501,13 +661,13 @@
 
 160621 Random Forest
   1. Review of Decision Trees
-      - In regression trees, the tree effectively performs axis-paralell splits, cordoning off the data into regions defined by lines paralell to the (x,y,z etc) axis.
+      - In regression trees, the tree effectively performs axis-parallel splits, cordoning off the data into regions defined by lines parallel to the (x,y,z etc) axis.
       - This is inherently different from linear regression models which speak to their strengths in some settings
       - How to regularize decision trees: Pre and post pruning
-        - Post pruning; after fitting trees deeply, decide threshold to prune back tree. - Ie one threshold is to prune back to minimum of data in a terminal node > the p avaialable features
-        - Pree pruning: define a penalty term alpha where alpha * abs(#terminal nodes) is a penalty term added to the MSE, and minimize this equation. Cross validate to determine alpha. ** This is used most commonly **
+        - Post pruning; after fitting trees deeply, decide threshold to prune back tree. - Ie one threshold is to prune back to minimum of data in a terminal node > the p available features
+        - Pre pruning: define a penalty term alpha where alpha * abs(#terminal nodes) is a penalty term added to the MSE, and minimize this equation. Cross validate to determine alpha. ** This is used most commonly **
         - * However, ensemble methods to build trees ie random forest will almost certainly do better than either pre/post pruning *
-      - Recall that in classification trees, chose an error metric such as Gini or Entroy error functions, both of which perform very similarly. In regression trees, use RSS to calculate information gain.
+      - Recall that in classification trees, chose an error metric such as Gini or Entropy error functions, both of which perform very similarly. In regression trees, use RSS to calculate information gain.
       - Making predictions, at each terminal node, for regression: predict using average. For classification: predict the most commonly occurring class.
   2. Pros and Cons of decision trees
       - Pros: how we think, easy to explain
@@ -524,7 +684,8 @@
   4. Random Forests:
       - BUILDS ON BAGGING: so you still take bootstrapped samples of the data (typically the same number of samples as the original data set).
       - At each split, consider a random selection of m predictors at each split, in each tree. Typically n = sqrt(p). Ultimately tune p this with cross validation.
-      - Leads to decorrelation of the trees, which leads to improved performance over bagging.  Serves to decrease variance of the total model.
+      - Leads to decorrelation of the trees, which leads to improved performance over bagging.  
+      - BIG IMPROVEMENT>>>> THIS Serves to decrease variance of the total model.
       - RF Bias Variance SSS4
       - As you build more trees in RF, bias stabilizes and variance asymptotically declines. Thus it is better to build as many trees as possible. The real limitation is computational time. And there is ultimtely a point beyond which growing more trees is essentially futile. So test for this via CV.
     A. Feature Importance
@@ -600,18 +761,19 @@
       - Machine learning methods rely on optimizing a "cost function". Cost functions are the mathematical definition of your machine learning goal.
       - Intuition for gradient descent: If you take a guess and pick a point on the curve. You can calculate the derivative of the function from that point ( or the derivative as suggested by picking two close-points), you can then see the direction of the derivative. Depending on if you're maximizing/minimizing the function, you move in the respective direction based on the derivative, check it again at the next point until your derivative is near zero (which represents a maxima or minima).
       - The "gradient" is defined as the sum of the partial derivative of multiple variables. This is actually what you calculate in the above scenario for multiple variables.
+        - the gradient points in the direction of steepest ascent
         - the gradient is in the direction of the steepest ascent. The gradient points upward, so we descend down the gradient
         - in gradient descent, follow the line of the steepest descent on the cost surface to find the minimum
         - Per iteration through features of the model, you update the parameters simultaneously with respect to that gradient. In other words, you calculate the gradient once per iteration.
         - NB: Gradient descent does not work with LASSO, since not differentiable given absolute value cost function
-          - Requires differentiable and convext cost function
+          - Requires differentiable and convex cost function
           - Only finds global optimum on globally convex functions
           - Convergence asymptotically
               - Choices of convergence criteria: max number of iterations, change in cost function, magnitude of gradient
           - Performs poorly without feature scaling. Since if higher varaince for some variables, may take extra time. Can scale features back once optimization is performed
     2. Stochastic Gradient Descent
         - Use a subset of data
-        - SGD computes cost function using a single different randomly chosen observation per iteration. On average, it achieves the same as GD, but may have more variability
+        - SGD computes cost function using a single, different randomly chosen observation per iteration. On average, it achieves the same as GD, but may have more variability
         - SGD actually converge faster on average than batch GD, can oscillate around the optimum
         - SGD generally requires less memory and computation and is faster, so is generally preferred.  
 

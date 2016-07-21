@@ -26,6 +26,10 @@ r = requests.get('http://www.ebay.com/.....complete URL here ')
 soup2 = BeautifulSoup(r.content, 'html.parser')
 
 from collections import defaultdict
+from time import time #gives runtime, call with "print time()"
+
+assign = _ #assigns var to the last output returned in the console
+'-'.join(<sequence of strings>)
 
 
 #PANDAS
@@ -64,6 +68,9 @@ pd.get_dummies(array) #create dummy variables
 pd.set_index('column_name', inplace=True) #set column as index
 pd.groupby(by=None, axis=0) #group df by first argument
 df.iloc[<integerindex>] #allows indexing by index location in pandas dataframe
+
+df.to_csv('filename', index=False) #write to csv
+
 
 # Numpy
 
@@ -133,6 +140,18 @@ def fig(digits):
         ax.imshow(digits.images[i])
         ax.axis('off')
     plt.show()
+
+
+# NLTK
+nltk.download('stopwords') #downloads stopwords for nltk
+
+from nltk.stem.porter import PorterStemmer
+from nltk.stem.snowball import SnowballStemmer
+from nltk.stem.wordnet import WordNetLemmatizer
+
+porter = PorterStemmer()
+snowball = SnowballStemmer('english')
+wordnet = WordNetLemmatizer()
 
 
 # PyMongo
@@ -220,5 +239,112 @@ db.coffee.aggregate( [ { $group :
         averageFriendCount: { $max: "$user.friends_count" }
     }
 }])
+
+
+
+# Boto for AWS
+
+import boto
+
+# setting up aws access keys using json
+with open('/Users/sf321092/aws.json') as f:
+    data = json.load(f)
+    access_key = data['access-key']
+    secret_access_key = data['secret-access-key']
+
+#open boto connection
+conn = boto.connect_s3(access_key, secret_access_key)
+
+#upload histogram to AWS S3
+bucket = conn.get_bucket('testing-geoff')
+#create a new key, which is akin to a new file in the bucket
+file_object = bucket.new_key('geofffig.png')
+#set key contents from filename in local path
+file_object.set_contents_from_filename('/Users/sf321092/ds/gal/daily/high-performance-python/geofffig.png')
+
+# command line code to log onto amazon instance from terminal, turns terminal into a terminal on the remote EC2 instance using ssh
+ssh -X -i /Users/sf321092/.ssh/galkey.pem ubuntu@ec2-54-225-0-87.compute-1.amazonaws.com
+
+# Command line code to write files to EC2 instance using scp
+scp -i /Users/sf321092/.ssh/galkey.pem /Users/sf321092/ds/gal/daily/high-performance-python/geoff_script.py ubuntu@e<public instance id>:~
+
+
+# SPARK!
+import pyspark
+sc = ps.SparkContext('local[4]') #initiating spark context locally using 4 cores
+sc.parallelize(lst) #creates an RDD for local list lst
+sc.textFile('sales.txt') #I believe this creates an RDD from a text file
+  .map(function) and .filter() # are functions you call on the sc object that perform transformations to create new RDDs from existing RDDs.
+  .count()  # is an action and brings the data from the RDDs back to the driver.
+  .first() #an action that returns the first entry in the RDD
+  .take(2) #an action that returns the first two entries in the RDD as a list
+  .collect() #an action that pulls all entries in the RDD, requiring the entire RDD to fit into memory  
+
+#word count example using Spark
+sc.textFile('input.txt')\
+    .flatMap(lambda line: line.split())\
+    .map(lambda word: (word, 1))\
+    .reduceByKey(lambda count1, count2: count1 + count2)\
+    .collect()
+
+    # Example Spark Commands
+    Expression	Meaning
+    filter(lambda x: x % 2 == 0)	Discard non-even elements
+    map(lambda x: x * 2)	Multiply each RDD element by 2
+    map(lambda x: x.split())	Split each string into words
+    flatMap(lambda x: x.split())	Split each string into words and flatten sequence
+    sample(withReplacement = True, 0.25)	Create sample of 25% of elements with replacement
+    union(rdd)	Append rdd to existing RDD
+    distinct()	Remove duplicates in RDD
+    sortBy(lambda x: x, ascending = False)	Sort elements in descending order
+
+    Common Actions
+    Expression	Meaning
+    collect()	Convert RDD to in-memory list
+    take(3)	First 3 elements of RDD
+    top(3)	Top 3 elements of RDD
+    takeSample(withReplacement = True, 3)	Create sample of 3 elements with replacement
+    sum()	Find element sum (assumes numeric elements)
+    mean()	Find element mean (assumes numeric elements)
+    stdev()	Find element deviation (assumes numeric elements)
+
+#Spark local UI is at localhost:8080
+
+#create local master node, run from inside master tmux session initiated by first command
+tmux new -s master #first command
+${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.master.Master \
+-h 127.0.0.1 \
+-p 7077 \
+--webui-port 8080
+
+#create local worker node, run from inside worker tmux session initiated by first command
+tmux new -s worker1
+${SPARK_HOME}/bin/spark-class org.apache.spark.deploy.worker.Worker \
+-c 1 \
+-m 1G \
+spark://127.0.0.1:7077
+
+#start ipython notebook to interact with LOCAL spark cluster
+IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark \
+--master spark://127.0.0.1:7077 \
+--executor-memory 1G \
+--driver-memory 1G
+
+
+
+#Tmux, run commands in terminal
+brew install tmux             # Install tmux with homebrew
+tmux new -s [session_name]    # Start a new tmux session
+ctrl + b, d                   # Detach from that tmux session
+tmux ls                       # Get a list of your currently running tmux sessions
+tmux attach -t [session_name] # Attach to an existing session (can use a instead of attach)
+tmux kill-session -t myname #kill session
+tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill #kill all tmux sessions
+
+
+
+'''
+
+
 
 ```
