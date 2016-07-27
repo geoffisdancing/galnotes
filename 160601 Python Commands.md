@@ -2,38 +2,94 @@
 ```python
 #Python General commands
 
-if __name__ == '__main__': #base code that will run when file is run by calling it by name
-from __future__ import division
+  if __name__ == '__main__': #base code that will run when file is run by calling it by name
+  from __future__ import division
 
-f = open(filename) #open filename
-with open(filename) as f: #open file, prefer to use this over open(filename), so it automatically closes the file
+  f = open(filename) #open filename
+  with open(filename) as f: #open file, prefer to use this over open(filename), so it automatically closes the file
 
-class ClassName(object): #way to implement a class ClassName
-  def __init__(self, selfvar1, selfvar2, function1, etc)
-    self.selfvar1 = selfvar1
+  class ClassName(object): #way to implement a class ClassName
+    def __init__(self, selfvar1, selfvar2, function1, etc)
+      self.selfvar1 = selfvar1
 
-from collections import Counter #imports Counter "container" serves to count the most common items in a list/array  
-Counter(array_lst_object).most_common(num_of_most_common_items) #returns a list with a tuple of the most common item and its count
+  from collections import Counter #imports Counter "container" serves to count the most common items in a list/array  
+  Counter(array_lst_object).most_common(num_of_most_common_items) #returns a list with a tuple of the most common item and its count
 
-if not os.path.exists("./<dirname>"): #to make a directory if doesn't exist using python
-    os.makedirs("./<dirname>")
+  if not os.path.exists("./<dirname>"): #to make a directory if doesn't exist using python
+      os.makedirs("./<dirname>")
 
-with open('URL here', 'r') as f:  #read URL location as file,
-      shoes = f.read().replace('\n','') #reading it in as html for parsing using BS (see PyMongo below)
+  with open('URL here', 'r') as f:  #read URL location as file,
+        shoes = f.read().replace('\n','') #reading it in as html for parsing using BS (see PyMongo below)
 
-import requests  #ability to make GET request for web scraping
-r = requests.get('http://www.ebay.com/.....complete URL here ')
-soup2 = BeautifulSoup(r.content, 'html.parser')
+  import requests  #ability to make GET request for web scraping
+  r = requests.get('http://www.ebay.com/.....complete URL here ')
+  soup2 = BeautifulSoup(r.content, 'html.parser')
 
-from collections import defaultdict
-from time import time #gives runtime, call with "print time()"
+  from collections import defaultdict
+  from time import time #gives runtime, call with "print time()"
 
-assign = _ #assigns var to the last output returned in the console
-'-'.join(<sequence of strings>)
+  %time  #ipython's magic method
+
+  from collections import Counter
+  d = Counter(lst)
+
+  assign = _ #assigns var to the last output returned in the console
+  '-'.join(<sequence of strings>)
+
+
+
+# Terminal/Bash
+  mkdir
+  cp
+  mv
+  rm
+  rmdir
+  man #bash manual
+  ctr + a #move to front
+  ctr + e #move to end
+  ctr + k #clears line after the cursor
+  ctr + l or clear  #clears terminal screen
+  !$ #last argument   
+  ls -l #one item per line ls detailed
+  echo $PATH #Bash searches for commands, system variable separated by colons
+    searches in ~/.bash_profile
+  # separate commands in batch using semicolon, or & to run concurrently
+
+
+# Git
+    git clone http://xxx
+    git status #status of local git with cloud git
+    git add . #add all thing in current directory and subdirectory
+    git commit -m “comment"
+    git push
+    git init #initializes directory as git repo on your local computer
+    echo "# galnotes" >> README.md
+    git init
+    git add README.md
+    git commit -m "first commit"
+    git remote add origin https://github.com/geoffisdancing/galnotes.git
+    git push -u origin master
+    git branch # tells the git branch status of your current working directory
+    git checkout master #switch to master branch from other branch, ie if you want to make a "hotfix" to master
+    git merge hotfix #merge hotfix branch changes with master (ie master is your current branch location since you just checked it out)
+    git branch -d <hotfixbranch> #can delete branch once you've merged it with master
+
+    git pull origin master     # syncs your local git repo with the origin (on http) pulling down new files
+    git pull #also works, don’t necessarily need “origin master"
+
+    #to push files from local repo (recently just committed to one account) to a different git account:
+    git remote -v #to get URL
+    git remote add <temp name> <change to your git url>
+    git push <temp name>
+
+    # to fetch a specific file from a remote git URL
+    git fetch {remote host url} #pulls branch information from the remote github host (ie from another computer), after which you can now do git checkout branch which may be from another computer/user
+    git branch -a #after fetch, will show the other branches from master, from which you can then checkout one you want
+    git checkout FETCH_HEAD -- '[filename]'  # both of these above commands used in order to pull an individual file from a the remote master. Must use dir/filename if file is located in a subdirectory
+
 
 
 #PANDAS
-
 %matplotlib inline # command in ipython to print graphs inline
 import matplotlib.pyplot as plt #plotting functionality plt
 
@@ -126,12 +182,86 @@ from sklearn.cross_validation import cross_val_score
 cross_val_score(estimator_object, X, y=none, scoring = <scoring type>, cv=None) #obtains a accuracy score by cross validation. Takes a parameterized estimator object, but this object does not need to be fitted to training data, as this will take training data (x and y if available) and perform cross validation (train test, train test K-fold times) to obtain a cross-validated score. You can set the type of score using scoring = <scoring type, below>, default scoring type is the simples appropriate score for the method, such as accuracy for classifiers or R2 for regressors; y lets you set labels for supervised learning, cv defaults to 3 fold CV, can set other integer
 types of scores: http://scikit-learn.org/stable/modules/model_evaluation.html
 
+
 # Matplotlib
 
 plt.legend() #to have plot labels show as legend
 plt.axvline(x=0.4) #plot vertical line
 plt.axhline(y=0.6) #plot horizontal line
 df.hist()
+plt.figure(figsize=(10,10)) #sets the figsize in matplotlib and Seaborn for the given session
+plt.savefig('example.png', dpi=300) #save figure
+#line plots
+plt.plot(x, y, marker='o', alpha=0.4, color='red')
+plt.plot(x, y2, marker='o', alpha=0.4, color='green')
+#scatter plots
+plt.scatter(x, y, edgecolor='none', s=size)
+#bar plots
+plt.bar(people_index, score, bar_width, align='center')
+plt.xticks(people_index, people)
+#histogram
+  import scipy.stats as scs
+  # Get a list of normally distributed values
+  values = scs.norm.rvs(size=1000)
+  # Plot the first histogram
+  plt.hist(values, color='r', alpha=.4)
+  plt.show()
+  # Plot the second histogram with probability density
+  plt.hist(values, color='r', alpha=.4, normed=1)
+  plt.show()
+#Box plots
+  import scipy.stats as scs
+  one = scs.norm(3, 5).rvs(size=1000)
+  two = scs.norm(5, 1).rvs(size=1000)
+  data = [one, two]
+  plt.boxplot(data)
+  plt.xticks([1, 2], ['a', 'b'])
+  plt.show()
+
+# Label axis/legend/Figure size
+  fig = plt.figure(figsize=(10, 4)) # 10 wide and 4 height
+  x = [1, 2, 3, 4]
+  y = [2, 3, 4, 5]
+  plt.plot(x, y, label='Legend 1')
+  plt.xlabel('X Axis', fontsize=14, fontweight='bold')
+  plt.ylabel('Y Axis', fontsize=14, fontweight='bold')
+  plt.title('Title', fontsize=20, fontweight='bold')
+  plt.legend(loc='upper left')
+
+#Sub plots
+    x = [1, 2, 3, 4]
+    y = [2, 3, 4, 5]
+
+    # Define the rows and columns of subplots (2x2). Can specify the figsize too
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12,7))
+
+    ax1.plot(x, y, label='first plot')
+    ax1.legend(loc='upper left')
+    ax1.set_xlabel('X label')
+    ax1.set_ylabel('Y label')
+    ax1.set_title('Title')
+    #OR
+    ax[0][0].plot(x, y, label='first plot')
+    ax[0][0].legend(loc='upper left')
+    ax[0][0].set_xlabel('X label')
+    ax[0][0].set_ylabel('Y label')
+    ax[0][0].set_title('Title')
+
+    # Plot 1 line on the upper right
+    ax2.plot(x, y, label='second plot', color='r')
+    ax2.legend(loc='upper left')
+
+    # Plot 1 line on the lower left
+    ax3.plot(x, y, label='third plot', color='g')
+    ax3.legend(loc='upper left')
+
+    # Plot 1 line on the lower right
+    ax4.plot(x, y, label='fourth plot', color='c')
+    ax4.legend(loc='upper left')
+
+    # Can set an overall title in the middle of the figure
+    plt.suptitle('Overall title', fontsize=16)
+
 
 #plotting several sub-plots
 def fig(digits):
@@ -142,7 +272,7 @@ def fig(digits):
     plt.show()
 
 
-# NLTK
+# NLTK for Natural Language Processing
 nltk.download('stopwords') #downloads stopwords for nltk
 
 from nltk.stem.porter import PorterStemmer
@@ -168,7 +298,6 @@ img_array = soup.select('img.img') #select CSS elements "img.img" from html usin
 
 
 # MongoDB
-
 Using Mongo - General Commands for Inspecting Mongo
   help                        // List top level mongo commands
   db.help()                   // List database level mongo commands
@@ -242,8 +371,7 @@ db.coffee.aggregate( [ { $group :
 
 
 
-# Boto for AWS
-
+# Boto for interaction with Amazon Web Services
 import boto
 
 # setting up aws access keys using json
@@ -269,7 +397,7 @@ ssh -X -i /Users/sf321092/.ssh/galkey.pem ubuntu@ec2-54-225-0-87.compute-1.amazo
 scp -i /Users/sf321092/.ssh/galkey.pem /Users/sf321092/ds/gal/daily/high-performance-python/geoff_script.py ubuntu@e<public instance id>:~
 
 
-# SPARK!
+# SPARK! Distributed Data Management
 import pyspark
 sc = ps.SparkContext('local[4]') #initiating spark context locally using 4 cores
 sc.parallelize(lst) #creates an RDD for local list lst
@@ -308,6 +436,20 @@ sc.textFile('input.txt')\
     mean()	Find element mean (assumes numeric elements)
     stdev()	Find element deviation (assumes numeric elements)
 
+json.loads()
+json.dumps() #use in mappnig functions to change items in RDD to json. read documentation
+
+# Spark Hive commands (to work with Hive data frames in Spark)
+hive_cxt = HiveContext(sc)
+df = hive_cxt.createDataFrame(iris_pandas_df) #create df in a hive context
+df.printSchema()
+df.filter(df['petal_length'] > 2).rdd.map(tuple).collect() #filter using Hive
+df.registerTempTable('iris')
+hive_cxt.sql('''SELECT * from iris
+                WHERE petal_length > 2''').head(5) #SQL Hive query using Spark
+
+
+
 #Spark local UI is at localhost:8080
 
 #create local master node, run from inside master tmux session initiated by first command
@@ -341,6 +483,45 @@ tmux attach -t [session_name] # Attach to an existing session (can use a instead
 tmux kill-session -t myname #kill session
 tmux ls | grep : | cut -d. -f1 | awk '{print substr($1, 0, length($1)-1)}' | xargs kill #kill all tmux sessions
 
+
+
+
+#Spark AWS
+mv Dowloads/<pemname>.pen .ssh/ #move file from folder to .ssh/
+ls -l #single file per line ls with read/write notation
+chmod 600 <filename>.pem #change read write privileges for your pem file
+ls -a #hidden folders in home folder
+
+# path to spark EC2 scropt: ~/spark-1.5.0-bin-hadoop1/ec2/spark-ec2
+[path to your spark-ec2 script] -k [key name] -i [path to your pem file] -r [aws region] -s 6 --copy-aws-credentials --ebs-vol-size=64 launch [give your cluster a name] #command line command to launch cluster using default settings
+
+#ie command line code:
+/usr/local/spark-1.5.0-bin-hadoop2.6/ec2/spark-ec2 -k sparkler -i ~/pem_files/sparkler.pem -r us-west-1 -s 6 --copy-aws-credentials --ebs-vol-size=64 launch my_cluster
+
+#scp transfer installation scripts (or files in general) to cluster master
+scp -i <path to pem file> <file to copy> root@<your master DNS>:/root/.
+
+#ie scp code to transfer files
+scp -i ~/pem_files/sparkler.pem install_scripts/install_these root@ec2-52-53-215-216.us-west-1.compute.amazonaws.com:/root/.
+
+#log into cluster and run installation scripts
+[path to your spark-ec2 script] -k [key name] -i [path to your pem file] -r [aws region] login [the name of your cluster]
+
+source install_these # install install files from cluster master terminal
+
+#"Pause" or stop cluster (does not terminate)
+[path to your spark-ec2 script] -k [key name] -i [path to your pem file] -r [aws region] stop [the name of your cluster]
+
+#restart paused/stopped cluster
+[path to your spark-ec2 script] -k [key name] -i [path to your pem file] -r [aws region] start [the name of your cluster]
+
+
+
+# Flask for python web servers
+from flask import Flask, request
+app = Flask(__name__) #requisite first line for a flask script, instantiating the app class for use throughout the script
+@app.route('/') #defines each page, / alone is root
+app.run(host='0.0.0.0', port=8080, debug=True) #put under main block, debug=True allows for autoreload for debugging code edits in real time
 
 
 '''

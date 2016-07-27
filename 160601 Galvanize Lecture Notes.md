@@ -1,3 +1,41 @@
+
+160722 Graph Theory
+  1. Terms:
+    - A graph is an unordered pair G = (V, E)
+    - V is our set of vertices
+    - E is a set of edges (pairs of vertices)
+    - V = {1,2,3}, E = {{1,2}, {2,3} etc}
+    - ORder is number of vertices, Size is number of edges
+    - Simple Graph: No loops and no multiple edges
+    - Degree: Number of neighbors
+    - For an undirected graph, an adjacency matrix is symmetric across the diagonal
+    - An Adjacency list is a list of nodes and edges denoting connection. An adjacency list requires storage of VxE, whereas an adjacency matrix requires storage of V^2 (since its a matrix)
+    - For lookup, Adjacency list requires searching V items for your answer, a matrix essentially doesn't require lookup since you can index right to your answer
+  2. Node importance
+    - Degree centrality = # of connections
+    - Betweenness centrality = a measure of node importance based on how many (shortest) paths cross through a given node
+    - Eigenvector centrality = Take the eigenvector of the adjacency matrix multiplied by matrix of ones, then again over and over see SSS21
+        - Way of accounting for the importance of nodes who are connections to a given node to determine the importance / centrality of the given node
+    - SSS21
+    - What Makes a community:
+      - Mutual Ties
+      - Compactness
+      - Dense edges
+      - Separation from other groups
+    - Modularity, Q, is a measure of community-ness
+      - SSS22 Modularity equation
+      - m is total number of degrees in the network
+    - Heuristic to maximize modularity is to cut the edges with the greatest betweenenss centrality, and calculate the modularity equation in the remaining communities created--and graph this; repeat for the next edge with next highest betweeness centrality. The edge at which this will peak and this peak is appx where the Q is maximized.
+
+
+160721 Spark AWS
+  1. Spark Data Frames
+    - Faster than traditional RDDs.
+    - Abstraction that simplifies working with structured databases.
+    - So after creating a spark context, you instantiate a hive or SQL context (feeding it the spark context).
+    - Load up data directly into the hive context.
+
+
 160720 Apache Spark
   1. Overall
     - Spark is a framework for distributed processing
@@ -23,7 +61,7 @@
     - The data is collected on the Driver
   3.
     - Group by key stores the values in memory, where as reduce by key, you only maintain the current accumulator so it is more light weight.  But if you need the individual elements, you need to use group by key.
-    - Spark MLib : ML library for use on Spark 
+    - Spark MLib : ML library for use on Spark
 
 
 
@@ -80,7 +118,7 @@
         - Can initialize with a random weight
         - So you have a matrix of weights between every node in each layer
         - Goal is to learn the weights via training
-        - So the function of a given node is then the matrix-wise dot product of the weights for that layer dot-product the input layer (preceeding).
+        - So the function of a given node is then the matrix-wise dot product of the weights for that layer dot-product the input layer (preceding).
         - There is additionally an "activation function" that defines how to combine the inputs with the weights from each node of the layer. Usually define the function uniformly across the layer, and often across the neural network.
             - Several functions work better than others for this purpose
             - Constraint is that the function must be differentiable
@@ -114,6 +152,16 @@
       - Can intersperse several convolutional layers and a pooling layer, and repeat as needed.
       - In subsequent layers of the network, each convolution is akin to a node, and the convolutions themselves are like weights that are changed with each forward/back-propagation. Therefore, each layer can "learn" more complex interactions between the features, again such that you decrease the loss function.
       - After the last convolutional layer, "unravel" the features that come out of the last layer into one or two fully-connected layers before giving the output predictions.
+  5. General learnings from trying (in discussion with Carey):
+      A. First step in building a neural net is to build it such that you can show that it is "learning" and thus overfitting.
+        - Do this by building it as deep first then wide second as possible, and adding the relevant filters / max-pooling (or other pooling layer) that make sense conceptually given the problem.
+        - Then can feed it a subset of the training data (in replicate, ie x 10) and see if it perfectly predicts the output ie 100% accuracy. This suggests that it is overfitting and thus learning.
+        - Can then impose "regularization" through increasing dropout, decreasing layers, increasing filters etc, and test the performance of this (ie how well you are controlling for overfitting) using cross validation.
+        - Then ultimately once you've adequately regularized and adjusted for overfitting as suggested by cross-validation, then feed it test data and see how it does.
+        - Recall that you need to take the complexity of the data into account in the design of your model. Ie if it is a simple dataset, you shouldn't build a deep network, otherwise you will overfit.  So prune layers.
+      B. Other things
+        - Its reasonable to use relu function for all upper layers, and then relevant activation for the final layer, such as sigmoid for a binary outcome.
+        - There is a train of thought that rather than initializing weights with the random uniform, perhaps use a gaussian distribution which may improve performance. Look into this and consider implementing.
 
 
 160707 Recommenders: Collaborative Filtering Recommenders
@@ -157,7 +205,6 @@
 
 
 160706
-
   1. Non Negative Matrix Factorization
     - At a high level: Non negative matrix factorization is a method of dimensionality reduction, whereby you break down a single matrix into two component matrices, but which have inner dimensions of "k". K defines the pre-defined k number of latent features you wish to find/break down your original matrix into.
         - defining k here is similar to all other unsupervised learning techniques whereby you can define how many "topics" or categories you aim to find using the method.
@@ -312,19 +359,20 @@
             - Allows modeling of the mean and the growth rate (slope or linear trend) to change with time.
             - Allows us to take int o account growth rate, by adding a factor "b".
             - thus have both alpha and gamma hyperparameters
-            - SSS14 Holt's Exponential Smoothing
+            - SSS13-2 Holt's Exponential Smoothing
         - Holt Winter's Exponential Smoothing : adds a component of seasonality to the linear trend/slope.
             - Similar to Holts, but it additionally takes into account an additional seasonal factor
             - Note that you ned to have data of enough seasons in order for this to work
     5. ARIMA:
         The Box-Jenkins Methodology applies autoregressive moving average models to find the best fit of time series based on past values.
         1. Approach:
-          - SSS15 ARIMA model approach
+          - SSS13-3 ARIMA model approach
           - Model Identification
 
           - The autocorrelation function is the correlation between the current time and the time x times ago. Uses pearson correlation coefficient
-          - Partial auto- correlation, is the correlation between two separated points with the effect of the intervening points conditioned out. Almost like multivaraible linear regression with intervening time points as variables. SSS16 phone snapshot
-        - See ipython notebook notes for examples of autocorrelation and partial autocorrelation plots SSS16 Autocorrelation/partial correlation plots
+          - Partial auto- correlation, is the correlation between two separated points with the effect of the intervening points conditioned out. Almost like multivaraible linear regression with intervening time points as variables.
+          - SSS13-4 Partial Autocorrelation
+        - See ipython notebook notes for examples of autocorrelation and partial autocorrelation plots SSS13-5 Autocorrelation/partial correlation plots
             - So note the first time point 0, correlation is 1 (since correlated with itself), but for autocorrelation, as you get farther out, correlation decreases.
             - For partial autocorrelation, after taking into account the first lag, the second lag actually has little additional correlation.
         - Stationary Time Series:
