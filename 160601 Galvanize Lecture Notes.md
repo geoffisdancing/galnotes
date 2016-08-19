@@ -25,7 +25,7 @@
     - Modularity, Q, is a measure of community-ness
       - SSS22 Modularity equation
       - m is total number of degrees in the network
-    - Heuristic to maximize modularity is to cut the edges with the greatest betweenenss centrality, and calculate the modularity equation in the remaining communities created--and graph this; repeat for the next edge with next highest betweeness centrality. The edge at which this will peak and this peak is appx where the Q is maximized.
+    - Heuristic to maximize modularity is to cut the edges with the greatest betweenness centrality, and calculate the modularity equation in the remaining communities created--and graph this; repeat for the next edge with next highest betweenness centrality. The edge at which this will peak and this peak is appx where the Q is maximized.
 
 
 160721 Spark AWS

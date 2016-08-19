@@ -35,7 +35,9 @@
 
   assign = _ #assigns var to the last output returned in the console
   '-'.join(<sequence of strings>)
+  float('NaN') #used to assign variable value to NaN
 
+  import pdb; pdb.set_trace()
 
 
 # Terminal/Bash
@@ -48,6 +50,7 @@
   ctr + a #move to front
   ctr + e #move to end
   ctr + k #clears line after the cursor
+  ctr + u #clear current line
   ctr + l or clear  #clears terminal screen
   !$ #last argument   
   ls -l #one item per line ls detailed
@@ -99,6 +102,7 @@ pd.read_table('text_filepath') #read text file as df
 pd.scatter_matrix(<dfname>, alpha = 0.2, figsize=(6,6),diagonal='kde'); #scatter matrix of dataframe variables in pandas
 
 df = df.drop('column name', axis=1, inplace=True)  # drops column in pandas dataframe, axis = 1 indicates column in pandas. default is axis = 0 which drops an observation (row) from the data
+df.drop(df.index[[1,2,3]]) #drop rows of df, indices 1,2,3
 df.pop('column name') #pops off column name from df, modifying df in place
 df = df[df['Column name']  <some value] # index based on column value, syntax here effectively deleting by re-saving as df
 df[['column 1', 'column 2']] #index multiple columns
@@ -126,6 +130,17 @@ pd.groupby(by=None, axis=0) #group df by first argument
 df.iloc[<integerindex>] #allows indexing by index location in pandas dataframe
 
 df.to_csv('filename', index=False) #write to csv
+df.reset_index(inplace=True) #pulls index into the first column.
+dt.datetime.strptime(ginger.date[0], '%d%b%y:%H:%M:%S') #strip time data from string, requires specific flags, at the bottom of this site: https://docs.python.org/2/library/datetime.html
+#can also use after reading csv, example: ginger['date']=pd.to_datetime(ginger['date'], format='%d%b%y:%H:%M:%S')
+df['column']=df.apply(lambda row: f(row), axis=1) #f = function to apply across each row of
+df.column.value_counts() #value counts for a given column (similar to tabulate)
+df[df['column'].isin([list of values])] #how to filter dataframe rows by "within/in"
+df.columns=[<list of names as strings>] #to rename columns
+df.replace(to_replace=None, value=None, inplace=True) #replace one value with another in df
+df.fillna(value=None, axis=None, inplace=False) #fill NaN values in df
+df.drop_duplicates(subset=None, keep='first/last', inplace=False) #drop duplicates, can specify a subset of columns to look over
+
 
 
 # Numpy
@@ -146,12 +161,14 @@ arr = np.array([]) #initialize empty array
 np.linspace(start,stop,num=50) #create a var from start to stop with num points.
 balance['Married'] = balance['Married'].map({'Yes': 1, 'No': 0}) #mapping to change responses from Yes to 1.
 np.logical_not(<condition>) #allows you to exclude things in <condition> without an if statement.
-
+X[np.where(mask)] #turns boolean mask into array of indices
+np.tile(X,reps) #repeat A, reps times
+np.ravel(a) #return a continugous flattened array from a, which can be a dataframe
 
 
 # Sklearn
 from sklearn.cross_validation import train_test_split
-train_feature, test_feature, train_target, test_target = \
+X_train, X_test, Y_train, Y_test = \
 train_test_split(features, target, test_size=0.3) # to make test/training set for cross validation
 
 
@@ -270,6 +287,12 @@ def fig(digits):
         ax.imshow(digits.images[i])
         ax.axis('off')
     plt.show()
+
+
+# Seaborn
+plotter = df.drop(['date_formatted','user_id','date','id_number','steps_list'],axis=1)
+sns.pairplot(plotter.iloc[:,0:5])  #creates pairwise scatter plots
+
 
 
 # NLTK for Natural Language Processing
@@ -478,6 +501,9 @@ IPYTHON_OPTS="notebook"  ${SPARK_HOME}/bin/pyspark \
 brew install tmux             # Install tmux with homebrew
 tmux new -s [session_name]    # Start a new tmux session
 ctrl + b, d                   # Detach from that tmux session
+ctrl + b, %                   # start a new pane in a window, horizontal
+ctrl + b, double quote        # start a new vertical split pain in window                   
+ctrl + b, o                   # switches between various panes
 tmux ls                       # Get a list of your currently running tmux sessions
 tmux attach -t [session_name] # Attach to an existing session (can use a instead of attach)
 tmux kill-session -t myname #kill session
@@ -524,6 +550,16 @@ app = Flask(__name__) #requisite first line for a flask script, instantiating th
 app.run(host='0.0.0.0', port=8080, debug=True) #put under main block, debug=True allows for autoreload for debugging code edits in real time
 
 
+
+
+#Pickle
+import cPickle as pickle  #cPickle is faster than pickle
+
+with open("model.pkl", 'w') as f: #how to "pickle" a model named model into file model.pkl
+    pickle.dump(model, f)
+
+with open("model.pkl") as f_un:   #to unpickle a model to use
+    model_unpickled = pickle.load(f_un)
 '''
 
 
