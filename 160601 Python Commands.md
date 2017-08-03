@@ -93,6 +93,8 @@
 
 
 #PANDAS
+#axis = 1 indicates column in pandas
+
 %matplotlib inline # command in ipython to print graphs inline
 import matplotlib.pyplot as plt #plotting functionality plt
 
@@ -141,6 +143,7 @@ df.replace(to_replace=None, value=None, inplace=True) #replace one value with an
 df.fillna(value=None, axis=None, inplace=False) #fill NaN values in df
 df.drop_duplicates(subset=None, keep='first/last', inplace=False) #drop duplicates, can specify a subset of columns to look over
 
+who%_ls DataFrame #lists dataframes in the current workspace/memory
 
 
 # Numpy
@@ -248,7 +251,8 @@ plt.xticks(people_index, people)
 #Sub plots
     x = [1, 2, 3, 4]
     y = [2, 3, 4, 5]
-
+    
+    # subplot() command specifies numrows, numcols, fignum where fignum ranges from 1 to numrows*numcols
     # Define the rows and columns of subplots (2x2). Can specify the figsize too
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(12,7))
 

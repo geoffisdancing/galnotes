@@ -1,3 +1,65 @@
+160822 Model Comparison Lecture
+  1. Linear Model
+    - Interpretability, given the linear assumption
+    - R2 represents the total variabilty explained by the model. Recall that by adding more features, R2 increases, so be aware that this is a limitaiton of R2 (doesn't penalize for increased features (model complexity))
+      - So adjusted R2, AIC, BIC account for increased complexity
+    - Need to assume constant variance in errors (homoskedastic)
+      - ie residuals are clustered randomly as x increases in residual plot.
+      - can do transformations to address this (because will be biased in the long-run)
+    - Assume mean zero
+    - Assume no multicolinearity, assume no autoregressive terms
+  2. Logistic Regression
+    - Need to normalize each feature if you want to interpret betas as strenghts of association
+    - Regularization of regression (in general) with Ridge/Lasso helps to optimize the Bias/Variance tradeoff, such that you decrease variance without sacrificing too much Bias
+    - Elastic net as the nice combination of LASSO & Ridge.
+  3. KNN
+    - Pick "k" using cross-validation
+    - Can be helpful to impute data
+  4. Decision Trees
+    - Can only do axis parallel splits
+    - In regression , minimize mean squared error in each leaf
+    - In classification, minimize "information criteria" Not sure, review
+    - "Greedy algorithm" meaning will pick the best split at the given point, without regard for the bigger picture performance.
+      - Almost never converges to the global optimimum
+    - Slow, because will look at every possible split at every node, so this take a lot of computational time.
+    - Deterministic, meaning it will build the same tree each time
+    - Decide on tree depth:
+      - Prepruning: depth, number of points in node etc
+      - Post pruning: prune back after making it deep .
+  5. Ensembling techniques
+    - Bagging: Bootstrap Aggregating
+      - Create bunch of trees on a bootstrapped subsample of the data
+      - Inherently correlated
+      - But decrease variance
+    - Random forest: Same as Bagging, except that at each split, limit features space
+      - Taking the average of trees, so, makes it difficult to overfit
+  6. SVM
+    - Perform fairly well in high dimension cases
+  7. Gradient Boosting
+    - Forward stagewise, learns from the prior model
+    - Gradient descent by fitting a new tree to the residuals
+    - Aggregating, trying to fit to where you didn't fit as well earlier
+    - Hyperparameters:
+      - depth of tree
+      - learning rate: ignore votes of some tree
+      - number of trees
+      - minimum samples per leaf
+  8. Unsupervised Methods
+    - K Means
+      - can't include categorical variables  
+      - need to scale the variables
+    - Hierarchical Clustering
+      - Choose two points close to one another, form groups from bottom up
+      - Dendrograms result and you can then chop off dendrograms at certain points to determine what groups look at at that point
+      - Benefit is you don't need to pick K at each point
+    - PCA
+      - Reduce dimensionality
+      - There's the possibility that the explanatory variable with the greatest predictive power is not in one of the dimensions reduced by PCA, causing it not to perform well
+      - SVD is a way of fitting
+        - Can do some latent feature analysis
+
+
+
 
 160722 Graph Theory
   1. Terms:
